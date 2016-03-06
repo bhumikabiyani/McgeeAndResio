@@ -1,4 +1,4 @@
-package windowTest;
+package joystickArduino;
 
 
 import javax.swing.JFrame;
@@ -22,7 +22,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 
 
-public class Frame extends JFrame {
+public class JoystickArduinoGUI extends JFrame {
 
 	/**
 	 * 
@@ -42,7 +42,7 @@ public class Frame extends JFrame {
 	 * @throws SerialPortException 
 	 */
 	public static void main(String[] args) throws InterruptedException, SerialPortException {
-		Frame frame = new Frame();
+		JoystickArduinoGUI frame = new JoystickArduinoGUI();
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setBounds(100, 100, 450, 300);
