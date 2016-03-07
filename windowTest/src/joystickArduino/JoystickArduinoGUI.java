@@ -3,6 +3,7 @@ package joystickArduino;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
 
 import jssc.SerialPort;
@@ -14,11 +15,15 @@ import net.java.games.input.ControllerEnvironment;
 
 import javax.swing.JComboBox;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.SystemColor;
 import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 
 
@@ -31,11 +36,15 @@ public class JoystickArduinoGUI extends JFrame {
 	private static JPanel contentPane;
 	private static int oldControllerComboBox;
 	private static Component[][] comList;
-	public static String[] serialPortList;
+	private static String[] serialPortList;
 	private static boolean start = false;
+	private static boolean sendData = false;
+	private static boolean oldChckBx = false;
+	private static boolean joystickToServo = false;
 	private static int finalController;
 	private static int finalComponent;
 	private static String finalComPort;
+	private static SerialPort port;
 	/**
 	 * Launch the application.
 	 * @throws InterruptedException 
@@ -98,13 +107,28 @@ public class JoystickArduinoGUI extends JFrame {
 		JButton View_Data = new JButton("View Data");
 		View_Data.setBounds(12, 209, 110, 24);
 		contentPane.add(View_Data);
-		View_Data.setVisible(false);
 		
+		JTextPane errorStarting = new JTextPane();
+		errorStarting.setBackground(SystemColor.control);
+		errorStarting.setEditable(false);
+		errorStarting.setFont(new Font("Calibri", Font.PLAIN, 13));
+		errorStarting.setForeground(Color.RED);
+		errorStarting.setText("Error starting. Please make sure all fields are filled and all devices are plugged in.");
+		errorStarting.setBounds(141, 148, 154, 92);
+		contentPane.add(errorStarting);
+		errorStarting.setVisible(false);
+		
+		JCheckBox chckbxTestJoystick = new JCheckBox("Test Joystick");
+		chckbxTestJoystick.setBounds(294, 137, 113, 25);
+		contentPane.add(chckbxTestJoystick);
 		
 		TextArea textArea = new TextArea();
-		textArea.setBounds(0, 0, 432, 253);
+		textArea.setEditable(false);
+		textArea.setBounds(0, 1, 432, 252);
 		contentPane.add(textArea);
 		textArea.setVisible(false);
+		
+		View_Data.setVisible(false);
 		
 		View_Data.addActionListener(new ActionListener(){
 
@@ -123,10 +147,11 @@ public class JoystickArduinoGUI extends JFrame {
 				View_Data.setVisible(false);
 				lblSendingData.setVisible(false);
 				View_Data.setVisible(false);
+				errorStarting.setVisible(false);
+				chckbxTestJoystick.setVisible(false);
 			}
 			
 		});
-		
 		
 		
 		frame.setVisible(true);	
@@ -149,6 +174,17 @@ public class JoystickArduinoGUI extends JFrame {
 		}
 		//run an infinite loop to change the contents of the component combo box based on the controller selected.
 		while(true){
+			//if just testing joystick is enabled, make the combobox and label disappear.
+			if(chckbxTestJoystick.isSelected() && oldChckBx != chckbxTestJoystick.isSelected()){
+				comPortComboBox.setVisible(false);
+				lblComPort.setVisible(false);
+				oldChckBx = chckbxTestJoystick.isSelected();
+			}else if(chckbxTestJoystick.isSelected() == false && oldChckBx != chckbxTestJoystick.isSelected()){
+				comPortComboBox.setVisible(true);
+				lblComPort.setVisible(true);
+				oldChckBx = chckbxTestJoystick.isSelected();
+			}
+			
 			if(oldControllerComboBox != controllerComboBox.getSelectedIndex()){
 				componentComboBox.removeAllItems();
 				oldControllerComboBox = controllerComboBox.getSelectedIndex();
@@ -158,34 +194,60 @@ public class JoystickArduinoGUI extends JFrame {
 				
 			}
 			//set final values and end the loop
-			if (start == true){
+			if (start == true && chckbxTestJoystick.isSelected() == false){
+				if(controllerComboBox.getSelectedItem() == null || componentComboBox.getSelectedItem() == null || comPortComboBox.getSelectedItem() == null || con[controllerComboBox.getSelectedIndex()].poll() == false){
+					errorStarting.setVisible(true);
+					start = false;
+				}else{
+					errorStarting.setVisible(false);
+					joystickToServo = true;
+					sendData = true;
+				}
+			}else if (start == true && chckbxTestJoystick.isSelected() == true){
+				if(controllerComboBox.getSelectedItem() == null || componentComboBox.getSelectedItem() == null || con[controllerComboBox.getSelectedIndex()].poll() == false){
+					errorStarting.setVisible(true);
+					start = false;
+				}else{
+					errorStarting.setVisible(false);
+					sendData = true;
+				}
+			}
+			
+			if (sendData == true){
+				
 				finalController = controllerComboBox.getSelectedIndex();
 				finalComponent = componentComboBox.getSelectedIndex();
-				finalComPort = comPortComboBox.getSelectedItem().toString();
+				if(joystickToServo){
+					finalComPort = comPortComboBox.getSelectedItem().toString();
+				}
 				break;
 			}
 			
 		}
 		//open port to arduino
-		SerialPort port = new SerialPort(finalComPort);
-		port.openPort();
-		port.setParams(9600, 8, 1, 0);
-		//wait while the port resets
-		lblStartingSerialPort.setVisible(true);
-		Thread.sleep(2000);
-		
+		if(joystickToServo){
+			port = new SerialPort(finalComPort);
+			port.openPort();
+			port.setParams(9600, 8, 1, 0);
+			//wait while the port resets
+			lblStartingSerialPort.setVisible(true);
+			Thread.sleep(2000);
+			lblSendingData.setVisible(true);
+		}
 		//Frame Stuff
-		lblSendingData.setVisible(true);
+		
 		View_Data.setVisible(true);
-		
-		
 		
 		
 		while(true){
 			con[finalController].poll();
-			port.writeInt((int)(comList[finalController][finalComponent].getPollData() * 90) + 90);
+			if(joystickToServo){
+				port.writeInt((int)(comList[finalController][finalComponent].getPollData() * 90) + 90);
+			}
 			System.out.println((int)(comList[finalController][finalComponent].getPollData() * 90) + 90);
-			textArea.append(String.valueOf((int)(comList[finalController][finalComponent].getPollData() * 90) + 90) + "\n");
+			if(textArea.isVisible()){
+				textArea.append(String.valueOf((int)(comList[finalController][finalComponent].getPollData() * 90) + 90) + "\n");
+			}
 			Thread.sleep(20);
 		}
 		
