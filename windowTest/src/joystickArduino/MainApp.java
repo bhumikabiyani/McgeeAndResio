@@ -5,6 +5,7 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -17,62 +18,68 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.event.MenuListener;
+import javax.swing.plaf.synth.SynthSeparatorUI;
 import javax.swing.event.MenuEvent;
 
 
-public class MainApp extends JFrame {
+public class MainApp extends JFrame implements Runnable{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 5399019670779785323L;
 	private JPanel contentPane;
-	private static Controller[] con;
+	private static Controller[] con = ControllerEnvironment.getDefaultEnvironment().getControllers();
 	private static JMenu mnDevice;
 	private static JMenuItem[] comList;
 	private static Component[][] com;
-	private static int comListNum = 0;
+	private static String simpleConName;
+	private static JRadioButtonMenuItem showAllControllers;
+	private static boolean oldShowAllControllers;
 	
 	/**
 	 * Launch the application.
 	 */
+	public void run(){
+		while(true){
+			updateDeviceMenu();
+		}
+	}
+	
+	public static void updateDeviceMenu(){
+		if(oldShowAllControllers != showAllControllers.isSelected() && showAllControllers.isSelected()){
+			System.out.println("Showing All Controllers");
+			oldShowAllControllers = showAllControllers.isSelected();
+		}else if (oldShowAllControllers != showAllControllers.isSelected() && !showAllControllers.isSelected()){
+			System.out.println("Showing Some Controllers");
+			oldShowAllControllers = showAllControllers.isSelected();
+		}
+		
+	}
 	public static void main(String[] args) {
+		(new Thread(new MainApp())).start();
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					MainApp frame = new MainApp();
 					frame.setTitle("Pi Driver Station");
-					frame.setUndecorated(true);
+//					frame.setUndecorated(true);
 					frame.setVisible(true);
-					frame.setExtendedState(frame.getExtendedState()|Frame.MAXIMIZED_BOTH);
+//					frame.setExtendedState(frame.getExtendedState()|Frame.MAXIMIZED_BOTH);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
 		//Gets Controllers and components for each
-				con = ControllerEnvironment.getDefaultEnvironment().getControllers();
-				com = new Component[con.length][];
 				
-//				for(int i = 0; i < con.length; i++){
-//					mnDevice.add(con[i].getName());
-//					com[i] = con[i].getComponents();
-//					comListNum += com[i].length;
-//				}
+				com = new Component[con.length][];
 //				comList = new JMenuItem[comListNum];
 				
 				//to traverse the entire com list
-				for(int i =0 ; i < com.length; i++){
-					mnDevice.add(con[i].getName());
-					com[i] = con[i].getComponents();
-					for(int j = 0; j < com[i].length; j++){
-						
-						comListNum += com[i].length;
-						//this will access all items in the second part of the 2d array
-					}
-				}
-				comList = new JMenuItem[comListNum];
 				
+
 		
 		
 	}
@@ -118,8 +125,19 @@ public class MainApp extends JFrame {
 		
 		mnDevice = new JMenu("Device");
 		
+		showAllControllers = new JRadioButtonMenuItem("Show All Controllers");
+		showAllControllers.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mnAdd.doClick();
+			}
+			
+		});
 		
 		mnAdd.add(mnDevice);
+		
+		mnAdd.add(showAllControllers);
 		
 		JMenu mnSetup = new JMenu("Setup");
 		menuBar.add(mnSetup);
