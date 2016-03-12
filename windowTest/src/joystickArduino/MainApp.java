@@ -54,19 +54,24 @@ public class MainApp extends JFrame {
 				con = ControllerEnvironment.getDefaultEnvironment().getControllers();
 				com = new Component[con.length][];
 				
-				for(int i = 0; i < con.length; i++){
-					mnDevice.add(con[i].getName());
-					com[i] = con[i].getComponents();
-					comListNum += com[i].length;
-				}
-				comList = new JMenuItem[comListNum];
+//				for(int i = 0; i < con.length; i++){
+//					mnDevice.add(con[i].getName());
+//					com[i] = con[i].getComponents();
+//					comListNum += com[i].length;
+//				}
+//				comList = new JMenuItem[comListNum];
 				
 				//to traverse the entire com list
 				for(int i =0 ; i < com.length; i++){
+					mnDevice.add(con[i].getName());
+					com[i] = con[i].getComponents();
 					for(int j = 0; j < com[i].length; j++){
+						
+						comListNum += com[i].length;
 						//this will access all items in the second part of the 2d array
 					}
 				}
+				comList = new JMenuItem[comListNum];
 				
 		
 		
