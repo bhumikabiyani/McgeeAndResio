@@ -29,8 +29,9 @@ public class MainApp extends JFrame implements Runnable{
 	 */
 	private static final long serialVersionUID = 5399019670779785323L;
 	private JPanel contentPane;
-	private static Controller[] con = ControllerEnvironment.getDefaultEnvironment().getControllers();
+	private static Controller[] con;
 	private static JMenu mnDevice;
+	private static JMenu mnAdd;
 	private static JMenuItem[] comList;
 	private static Component[][] com;
 	private static String simpleConName;
@@ -42,7 +43,6 @@ public class MainApp extends JFrame implements Runnable{
 	 */
 	public void run(){
 		while(true){
-			updateDeviceMenu();
 		}
 	}
 	
@@ -73,14 +73,16 @@ public class MainApp extends JFrame implements Runnable{
 			}
 		});
 		//Gets Controllers and components for each
-				
+				con = ControllerEnvironment.getDefaultEnvironment().getControllers();
 				com = new Component[con.length][];
 //				comList = new JMenuItem[comListNum];
-				
-				//to traverse the entire com list
-				
-
-		
+				mnDevice.removeAll();
+				for (int i = 0; i < com.length; i++){
+					simpleConName = con[i].getName().toLowerCase();
+					if(simpleConName.contains("keyboard")|| simpleConName.contains("controller") || simpleConName.contains("joystick") || simpleConName.contains("logitech")){
+						mnDevice.add(con[i].getName());
+					}
+				}
 		
 	}
 
@@ -120,7 +122,7 @@ public class MainApp extends JFrame implements Runnable{
 		});
 		
 		
-		JMenu mnAdd = new JMenu("Add");
+		mnAdd = new JMenu("Add");
 		menuBar.add(mnAdd);
 		
 		mnDevice = new JMenu("Device");
@@ -131,6 +133,21 @@ public class MainApp extends JFrame implements Runnable{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				mnAdd.doClick();
+				if(showAllControllers.isSelected()){
+					mnDevice.removeAll();
+					for(int i = 0; i < con.length; i++){
+						mnDevice.add(con[i].getName());
+					}
+				}else {
+					mnDevice.removeAll();
+					for(int i = 0; i < con.length; i++){
+						simpleConName = con[i].getName().toLowerCase();
+						if(simpleConName.contains("keyboard")|| simpleConName.contains("controller") || simpleConName.contains("joystick") || simpleConName.contains("logitech")){
+							mnDevice.add(con[i].getName());
+						}
+						
+					}
+				}
 			}
 			
 		});
