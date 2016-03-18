@@ -17,12 +17,9 @@ import net.java.games.input.ControllerEnvironment;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.event.MenuListener;
-import javax.swing.plaf.synth.SynthSeparatorUI;
-import javax.swing.event.MenuEvent;
 
 
-public class MainApp extends JFrame implements Runnable{
+public class MainApp extends JFrame{
 
 	/**
 	 * 
@@ -32,32 +29,15 @@ public class MainApp extends JFrame implements Runnable{
 	private static Controller[] con;
 	private static JMenu mnDevice;
 	private static JMenu mnAdd;
-	private static JMenuItem[] comList;
 	private static Component[][] com;
-	private static String simpleConName;
 	private static JRadioButtonMenuItem showAllControllers;
-	private static boolean oldShowAllControllers;
 	
 	/**
 	 * Launch the application.
 	 */
-	public void run(){
-		while(true){
-		}
-	}
+
 	
-	public static void updateDeviceMenu(){
-		if(oldShowAllControllers != showAllControllers.isSelected() && showAllControllers.isSelected()){
-			System.out.println("Showing All Controllers");
-			oldShowAllControllers = showAllControllers.isSelected();
-		}else if (oldShowAllControllers != showAllControllers.isSelected() && !showAllControllers.isSelected()){
-			System.out.println("Showing Some Controllers");
-			oldShowAllControllers = showAllControllers.isSelected();
-		}
-		
-	}
 	public static void main(String[] args) {
-		(new Thread(new MainApp())).start();
 		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -75,11 +55,9 @@ public class MainApp extends JFrame implements Runnable{
 		//Gets Controllers and components for each
 				con = ControllerEnvironment.getDefaultEnvironment().getControllers();
 				com = new Component[con.length][];
-//				comList = new JMenuItem[comListNum];
 				mnDevice.removeAll();
 				for (int i = 0; i < com.length; i++){
-					simpleConName = con[i].getName().toLowerCase();
-					if(simpleConName.contains("keyboard")|| simpleConName.contains("controller") || simpleConName.contains("joystick") || simpleConName.contains("logitech")){
+					if(con[i].getType() == Controller.Type.GAMEPAD || con[i].getType() == Controller.Type.KEYBOARD){
 						mnDevice.add(con[i].getName());
 					}
 				}
@@ -141,8 +119,7 @@ public class MainApp extends JFrame implements Runnable{
 				}else {
 					mnDevice.removeAll();
 					for(int i = 0; i < con.length; i++){
-						simpleConName = con[i].getName().toLowerCase();
-						if(simpleConName.contains("keyboard")|| simpleConName.contains("controller") || simpleConName.contains("joystick") || simpleConName.contains("logitech")){
+						if(con[i].getType() == Controller.Type.GAMEPAD || con[i].getType() == Controller.Type.KEYBOARD){
 							mnDevice.add(con[i].getName());
 						}
 						
