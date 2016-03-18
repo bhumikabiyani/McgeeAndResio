@@ -4,6 +4,5 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="lib" path="jInput/dist/jinput.jar"/>
 	<classpathentry kind="lib" path="jSSC-2.6.0-Release/jssc.jar"/>
-	<classpathentry kind="lib" path="jsfml/jsfml.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
