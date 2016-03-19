@@ -18,6 +18,7 @@ import net.java.games.input.Component;
 import net.java.games.input.Controller;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
+import java.awt.Color;
 
 public class FrameEdit extends JFrame {
 	private static Controller[] con;
@@ -116,6 +117,19 @@ public FrameEdit() {
 		
 		mnAdd.add(showAllControllers);
 		
+		JMenu mnView = new JMenu("View");
+		menuBar.add(mnView);
+		
+		JMenuItem mntmMaximize = new JMenuItem("Maximize");
+		mnView.add(mntmMaximize);
+		mntmMaximize.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent arg0) {
+				
+			}
+			
+		});
+		
 		JMenu mnSetup = new JMenu("Setup");
 		menuBar.add(mnSetup);
 		contentPane = new JPanel();
@@ -123,23 +137,24 @@ public FrameEdit() {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-//		JPanel panel = new JPanel();
-//		panel.setBounds(0, 139, 139, 88);
-//		contentPane.add(panel);
-//		panel.setLayout(null);
-//		panel.setVisible(false);
+		JPanel panel = new JPanel();
+		panel.setBackground(Color.GRAY);
+		panel.setBounds(0, 0, 139, 88);
+		contentPane.add(panel);
+		panel.setLayout(null);
+		panel.setVisible(false);
 		
-//		JComboBox comboBox = new JComboBox();
-//		comboBox.setBounds(0, 0, 139, 22);
-//		panel.add(comboBox);
-//		
-//		JButton btnAddAsButton = new JButton("Add As Button");
-//		btnAddAsButton.setBounds(0, 25, 127, 25);
-//		panel.add(btnAddAsButton);
-//		
-//		JButton btnAddAsAxis = new JButton("Add As Axis");
-//		btnAddAsAxis.setBounds(0, 50, 127, 25);
-//		panel.add(btnAddAsAxis);
+		JComboBox comboBox = new JComboBox();
+		comboBox.setBounds(0, 0, 139, 22);
+		panel.add(comboBox);
+		
+		JButton btnAddAsButton = new JButton("Add As Button");
+		btnAddAsButton.setBounds(0, 25, 127, 25);
+		panel.add(btnAddAsButton);
+		
+		JButton btnAddAsAxis = new JButton("Add As Axis");
+		btnAddAsAxis.setBounds(0, 50, 127, 25);
+		panel.add(btnAddAsAxis);
 		
 		
 	}
