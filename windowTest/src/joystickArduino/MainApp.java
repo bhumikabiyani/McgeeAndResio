@@ -5,11 +5,13 @@ import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
@@ -21,12 +23,15 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
+/**
+ * @author McGee and Daniel
+ */
+
+//TODO *****************SOME OF THIS NEEDS TO BE SPLIT INTO CLASSES AND METHODS!*********************************
+//TODO cleanup
 
 public class MainApp extends JFrame implements Runnable{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 5399019670779785323L;
 	
 	//Main Frame Declarations-------------------------------------
@@ -135,6 +140,8 @@ public class MainApp extends JFrame implements Runnable{
 			}
 			
 		});
+		
+		//TODO implement action listener for component menus
 		
 		//TODO ip camera implementation 
 		
@@ -277,8 +284,19 @@ public class MainApp extends JFrame implements Runnable{
 		
 		//TODO add Help tab for displaying info on how to use
 		
-		
-		
+		//TODO make label visible....
+		//JLabel to store the components being used
+		JLabel components = new JLabel();
+		//TODO teach how to use array lists/add component names to this list
+		//**NOTE** we are using array lists because this list will change sizes
+		//also when adding items to this list, always remember to end a name with \n
+		ArrayList<String> listComponents = new ArrayList<String>();
+		//concats all devices
+		String displayComponents = new String("Devices:\n");
+		//this adds all of the strings together
+		for(int i = 0; i < listComponents.size(); i++)
+			displayComponents.concat(listComponents.get(i));
+		components.setText(displayComponents);
 	}
 
 
