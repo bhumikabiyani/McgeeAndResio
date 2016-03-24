@@ -30,6 +30,11 @@ import javax.swing.JMenuItem;
 //TODO *****************SOME OF THIS NEEDS TO BE SPLIT INTO CLASSES AND METHODS!*********************************
 //TODO cleanup
 
+//--------------------------In General, this class is a test. It WILL NOT BE IN THE FINAL-----------
+//--------------------------RELEASE!! Methods labeled with KEEP will be in the final release.-------
+
+//NOTE* Make sure methods with the label KEEP are properly commented. (This means you, McGee!)
+
 public class MainApp extends JFrame implements Runnable{
 
 	private static final long serialVersionUID = 5399019670779785323L;
@@ -45,10 +50,14 @@ public class MainApp extends JFrame implements Runnable{
 	private static JMenuItem mntmMaximize;
 	private static JMenuItem mntmMinimize;
 	private static JRadioButtonMenuItem showAllControllers;
+	private static JComboBox<String> comboBox;
 	
 	//General variables-------------------------------------------
 	private static boolean addItem = false;
 	private static String maxedState = "minimized";
+	private static String deviceSelected;
+	private static int deviceSelectedIndex;
+	private static boolean panelRunning = false;
 	
 	//JInput related variables------------------------------------
 	private static Controller[] con;
@@ -93,12 +102,15 @@ public class MainApp extends JFrame implements Runnable{
 						//be transferred to displaying the components in the comboBox
 						controllerItem.addActionListener(new ActionListener(){
 							public void actionPerformed(ActionEvent arg0) {
-								addItem = true;
+								addItemPanel(true);
 
 							}
 							
 						});
 					}
+				}
+				for(int i = 0; i < con.length; i++){
+					com[i] = con[i].getComponents();
 				}
 			//End of main thread. New thread starts (at the bottom) with while loop 
 			//that checks for frame-related things.
@@ -168,7 +180,7 @@ public class MainApp extends JFrame implements Runnable{
 						//be transferred to displaying the components in the comboBox
 						controllerItem.addActionListener(new ActionListener(){
 							public void actionPerformed(ActionEvent arg0) {
-								addItem = true;
+								addItemPanel(true);
 
 							}
 							
@@ -183,7 +195,9 @@ public class MainApp extends JFrame implements Runnable{
 							mnDevice.add(controllerItem);
 							controllerItem.addActionListener(new ActionListener(){
 								public void actionPerformed(ActionEvent arg0) {
-									addItem = true;
+									deviceSelected = controllerItem.getName();
+									addItemPanel(true);
+									
 
 								}
 								
@@ -257,7 +271,7 @@ public class MainApp extends JFrame implements Runnable{
 		
 		//TODO add listing of components based on the selection in Add tab
 		//will house the list of components
-		JComboBox<?> comboBox = new JComboBox();
+		comboBox = new JComboBox<String>();
 		comboBox.setBounds(0, 0, 139, 22);
 		panel.add(comboBox);
 		
@@ -266,7 +280,7 @@ public class MainApp extends JFrame implements Runnable{
 		panel.add(btnAddAsButton);
 		btnAddAsButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
-				addItem = false;
+				addItemPanel(false);
 			}
 			
 		});
@@ -277,7 +291,7 @@ public class MainApp extends JFrame implements Runnable{
 		panel.add(btnAddAsAxis);
 		btnAddAsAxis.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
-				addItem = false;
+				addItemPanel(false);
 			}
 			
 		});
@@ -308,11 +322,6 @@ public class MainApp extends JFrame implements Runnable{
 			e1.printStackTrace();
 		}
 		while(true){
-			if(addItem == true){
-				panel.setVisible(true);
-			}else{
-				panel.setVisible(false);
-			}
 			
 			if(maxedState == "maximized"){
 				mntmMaximize.setVisible(false);
@@ -328,6 +337,40 @@ public class MainApp extends JFrame implements Runnable{
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+	
+	
+	
+	//KEEP THIS
+	public static boolean addItemPanel(boolean state){
+		if(state == true){
+			panel.setVisible(true);
+			
+			//get index of device selected
+			for (int i = 0; i < con.length; i++){
+				if(con[i].getName() == deviceSelected){
+					deviceSelectedIndex = i;
+					break;
+				}
+			}
+			//clear comboBox if it has items
+			if(comboBox.getItemCount() > 0){
+				comboBox.removeAllItems();
+			}
+			
+			
+			//populate ComboBox
+			for(int i = 0; i < com[deviceSelectedIndex].length; i++){
+				comboBox.addItem(com[deviceSelectedIndex][i].getName());
+			}
+			
+			
+			return true;
+		}else{
+			panel.setVisible(false);
+			
+			return false;
 		}
 	}
 }
