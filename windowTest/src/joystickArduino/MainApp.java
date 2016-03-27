@@ -53,12 +53,11 @@ public class MainApp extends JFrame implements Runnable{
 	private static JComboBox<String> comboBox;
 	
 	//General variables-------------------------------------------
+	private static boolean addItem = false;
 	private static String maxedState = "minimized";
 	private static String deviceSelected;
 	private static int deviceSelectedIndex;
-	private static int componentIndex;
-	private static boolean isButton = false;
-	private static boolean isAxis = false;
+	private static boolean panelRunning = false;
 	
 	//JInput related variables------------------------------------
 	private static Controller[] con;
@@ -67,6 +66,12 @@ public class MainApp extends JFrame implements Runnable{
 	/**
 	 * Launch the application.
 	 */
+
+
+	
+	public static void addDevice(String Label){
+		
+	}
 	
 	
 	public static void main(String[] args) {
@@ -86,9 +91,24 @@ public class MainApp extends JFrame implements Runnable{
 		//Gets Controllers and components for each
 				con = ControllerEnvironment.getDefaultEnvironment().getControllers();
 				com = new Component[con.length][];
-				
-				refreshDeviceList();
-				
+				mnDevice.removeAll();
+				for (int i = 0; i < com.length; i++){
+					if(con[i].getType() == Controller.Type.GAMEPAD || con[i].getType() == Controller.Type.KEYBOARD){
+						JMenuItem controllerItem = new JMenuItem();
+						controllerItem.setText(con[i].getName());
+						mnDevice.add(controllerItem);
+						//adds an action listener for each item in the list
+						//TODO set a string to the name of the selected item so that it can
+						//be transferred to displaying the components in the comboBox
+						controllerItem.addActionListener(new ActionListener(){
+							public void actionPerformed(ActionEvent arg0) {
+								addItemPanel(true);
+
+							}
+							
+						});
+					}
+				}
 				for(int i = 0; i < con.length; i++){
 					com[i] = con[i].getComponents();
 				}
@@ -97,6 +117,7 @@ public class MainApp extends JFrame implements Runnable{
 			//TODO Create thread that will continually send information over wifi.
 		
 	}
+
 	/**
 	 * Create the frame.
 	 */
@@ -209,9 +230,6 @@ public class MainApp extends JFrame implements Runnable{
 				frame_minimized.setVisible(true);
 				frame_minimized.setExtendedState(Frame.NORMAL);
 				maxedState = "minimized";
-				
-				refreshDeviceList();
-				
 			}
 			
 		});
@@ -229,9 +247,6 @@ public class MainApp extends JFrame implements Runnable{
 				frame_maximized.setVisible(true);
 				frame_maximized.setExtendedState(Frame.MAXIMIZED_BOTH);
 				maxedState = "maximized";
-				
-				refreshDeviceList();
-				
 			}
 			
 		});
@@ -266,10 +281,6 @@ public class MainApp extends JFrame implements Runnable{
 		btnAddAsButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
 				addItemPanel(false);
-				componentIndex = comboBox.getSelectedIndex();
-				isButton = true;
-				isAxis = false;
-				
 			}
 			
 		});
@@ -281,15 +292,25 @@ public class MainApp extends JFrame implements Runnable{
 		btnAddAsAxis.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
 				addItemPanel(false);
-				componentIndex = comboBox.getSelectedIndex();
-				isAxis = true;
-				isButton = false;
 			}
 			
 		});
 		
 		//TODO add Help tab for displaying info on how to use
-
+		
+		//TODO make label visible....
+		//JLabel to store the components being used
+		JLabel components = new JLabel();
+		//TODO teach how to use array lists/add component names to this list
+		//**NOTE** we are using array lists because this list will change sizes
+		//also when adding items to this list, always remember to end a name with \n
+		ArrayList<String> listComponents = new ArrayList<String>();
+		//concats all devices
+		String displayComponents = new String("Devices:\n");
+		//this adds all of the strings together
+		for(int i = 0; i < listComponents.size(); i++)
+			displayComponents.concat(listComponents.get(i));
+		components.setText(displayComponents);
 	}
 
 
@@ -322,7 +343,7 @@ public class MainApp extends JFrame implements Runnable{
 	
 	
 	//KEEP THIS
-	public static void addItemPanel(boolean state){
+	public static boolean addItemPanel(boolean state){
 		if(state == true){
 			panel.setVisible(true);
 			
@@ -345,49 +366,11 @@ public class MainApp extends JFrame implements Runnable{
 			}
 			
 			
-			
+			return true;
 		}else{
 			panel.setVisible(false);
 			
-		 
-		}
-	}
-	
-	//Refreshes list under Add>Device
-	//KEEP THIS
-	public static void refreshDeviceList(){
-		mnDevice.removeAll();
-		for (int i = 0; i < com.length; i++){
-			if(con[i].getType() == Controller.Type.GAMEPAD || con[i].getType() == Controller.Type.KEYBOARD){
-				JMenuItem controllerItem = new JMenuItem();
-				controllerItem.setText(con[i].getName());
-				mnDevice.add(controllerItem);
-				//adds an action listener for each item in the list
-				//TODO set a string to the name of the selected item so that it can
-				//be transferred to displaying the components in the comboBox
-				controllerItem.addActionListener(new ActionListener(){
-					public void actionPerformed(ActionEvent arg0) {
-						addItemPanel(true);
-
-					}
-					
-				});
-			}else{
-				JMenuItem controllerItem = new JMenuItem();
-				controllerItem.setText(con[i].getName());
-				mnDevice.add(controllerItem);
-				//adds an action listener for each item in the list
-				//TODO set a string to the name of the selected item so that it can
-				//be transferred to displaying the components in the comboBox
-				controllerItem.addActionListener(new ActionListener(){
-					public void actionPerformed(ActionEvent arg0) {
-						addItemPanel(true);
-
-					}
-					
-				});
-				
-			}
+			return false;
 		}
 	}
 }
