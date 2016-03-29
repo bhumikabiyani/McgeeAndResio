@@ -19,6 +19,7 @@ import net.java.games.input.Controller;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
 import java.awt.Color;
+import javax.swing.JList;
 
 public class FrameEdit extends JFrame {
 	private static Controller[] con;
@@ -155,6 +156,20 @@ public FrameEdit() {
 		JButton btnAddAsAxis = new JButton("Add As Axis");
 		btnAddAsAxis.setBounds(0, 50, 127, 25);
 		panel.add(btnAddAsAxis);
+		
+		JPanel componentPanel = new JPanel();
+		componentPanel.setBackground(Color.LIGHT_GRAY);
+		componentPanel.setBounds(173, 0, 259, 227);
+		contentPane.add(componentPanel);
+		componentPanel.setLayout(null);
+		
+		JList buttonList = new JList();
+		buttonList.setBounds(12, 13, 116, 201);
+		componentPanel.add(buttonList);
+		
+		JList axisList = new JList();
+		axisList.setBounds(129, 13, 118, 201);
+		componentPanel.add(axisList);
 		
 		
 	}
